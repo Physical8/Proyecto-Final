@@ -1,0 +1,212 @@
+<div class="container">
+    <h1 class="mt-4">Gestión de Pilotos</h1>
+
+    <!-- Formulario de búsqueda -->
+    <div class="mb-3">
+        <input type="text" class="form-control" id="search" placeholder="Buscar...">
+    </div>
+
+    <!-- Botón para abrir el modal de crear -->
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+            Agregar nuevo piloto
+        </button>
+    </div>
+
+    <!-- Lista de pilotos -->
+    <ul class="list-group" id="pilotoList">
+        <% pilotos.forEach((piloto) => { %>
+            <li class="list-group-item piloto-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span><%= piloto.nombre %> - Equipo: <%= piloto.equipo_actual %> - Nacionalidad: <%= piloto.nacionalidad %></span>
+                    <div class="btn-group" role="group">
+                        <!-- Botón de Editar -->
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                data-piloto-id="<%= piloto.id %>" data-piloto-nombre="<%= piloto.nombre %>"
+                                data-piloto-equipo_actual="<%= piloto.equipo_actual %>" data-piloto-nacionalidad="<%= piloto.nacionalidad %>">Editar</button>
+                        <!-- Botón de Detalles -->
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#detailsModal"
+                                data-piloto-nombre="<%= piloto.nombre %>" data-piloto-equipo_actual="<%= piloto.equipo_actual %>"
+                                data-piloto-nacionalidad="<%= piloto.nacionalidad %>" data-piloto-created_at="<%= piloto.created_at %>"
+                                data-piloto-updated_at="<%= piloto.updated_at %>">Detalles</button>
+                        <!-- Botón de Eliminar -->
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-piloto-id="<%= piloto.id %>">Eliminar</button>
+                    </div>
+                </div>
+            </li>
+        <% }) %>
+    </ul>
+</div>
+
+<!-- Modal para crear piloto -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Crear Piloto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/pilotospanel" method="POST">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre:</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nacionalidad" class="form-label">Nacionalidad:</label>
+                        <input type="text" class="form-control" id="nacionalidad" name="nacionalidad" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="equipo_actual" class="form-label">Equipo Actual:</label>
+                        <input type="text" class="form-control" id="equipo_actual" name="equipo_actual" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar piloto -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Piloto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" action="" method="POST">
+                    <div class="mb-3">
+                        <label for="editNombre" class="form-label">Nombre:</label>
+                        <input type="text" class="form-control" id="editNombre" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editNacionalidad" class="form-label">Nacionalidad:</label>
+                        <input type="text" class="form-control" id="editNacionalidad" name="nacionalidad" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEquipoActual" class="form-label">Equipo Actual:</label>
+                        <input type="text" class="form-control" id="editEquipoActual" name="equipo_actual" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalles de piloto -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Detalles del Piloto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group mt-4">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Nombre:</strong> <span id="detailNombre"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Nacionalidad:</strong> <span id="detailNacionalidad"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Equipo Actual:</strong> <span id="detailEquipoActual"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Fecha de Creación:</strong> <span id="detailCreatedAt"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Última Actualización:</strong> <span id="detailUpdatedAt"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para eliminar piloto -->
+<div class="modal fade" id="deleteModalPiloto" tabindex="-1" aria-labelledby="deleteModalLabelPiloto" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabelPiloto">Eliminar Piloto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar este piloto?</p>
+                <form id="deleteFormPiloto" action="" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Funcionalidad del buscador
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.toLowerCase();
+            const pilotos = document.querySelectorAll('.piloto-item');
+            pilotos.forEach(piloto => {
+                const text = piloto.innerText.toLowerCase();
+                piloto.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+
+        // Funcionalidad de edición de piloto
+        const editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const pilotoId = button.getAttribute('data-piloto-id');
+            const pilotoNombre = button.getAttribute('data-piloto-nombre');
+            const pilotoNacionalidad = button.getAttribute('data-piloto-nacionalidad');
+            const pilotoEquipoActual = button.getAttribute('data-piloto-equipo_actual');
+
+            const editForm = document.getElementById('editForm');
+            editForm.action = `/pilotospanel/${pilotoId}`;
+            document.getElementById('editNombre').value = pilotoNombre;
+            document.getElementById('editNacionalidad').value = pilotoNacionalidad;
+            document.getElementById('editEquipoActual').value = pilotoEquipoActual;
+        });
+
+        // Funcionalidad de detalles de piloto
+        const detailsModal = document.getElementById('detailsModal');
+        detailsModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const pilotoNombre = button.getAttribute('data-piloto-nombre');
+            const pilotoNacionalidad = button.getAttribute('data-piloto-nacionalidad');
+            const pilotoEquipoActual = button.getAttribute('data-piloto-equipo_actual');
+            const pilotoCreatedAt = button.getAttribute('data-piloto-created_at');
+            const pilotoUpdatedAt = button.getAttribute('data-piloto-updated_at');
+
+            document.getElementById('detailNombre').innerText = pilotoNombre;
+            document.getElementById('detailNacionalidad').innerText = pilotoNacionalidad;
+            document.getElementById('detailEquipoActual').innerText = pilotoEquipoActual;
+            document.getElementById('detailCreatedAt').innerText = pilotoCreatedAt;
+            document.getElementById('detailUpdatedAt').innerText = pilotoUpdatedAt;
+        });
+
+        const deleteModalPiloto = document.getElementById('deleteModalPiloto');
+        deleteModalPiloto.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const pilotoId = button.getAttribute('data-piloto-id');
+        
+        const deleteForm = document.getElementById('deleteFormPiloto');
+        deleteForm.action = `/pilotos/${pilotoId}?_method=DELETE`;  // Asegúrate de que el URL sea correcto
+    });
+
+
+
+    });
+</script>

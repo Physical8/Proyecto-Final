@@ -1,0 +1,208 @@
+<div class="container">
+    <h1 class="mt-4">Gestión de Motos</h1>
+
+    <!-- Formulario de búsqueda -->
+    <div class="mb-3">
+        <input type="text" class="form-control" id="search" placeholder="Buscar...">
+    </div>
+
+    <!-- Botón para abrir el modal de crear -->
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+            Agregar nueva moto
+        </button>
+    </div>
+
+    <!-- Lista de motos -->
+    <ul class="list-group" id="motoList">
+        <% motos.forEach((moto) => { %>
+            <li class="list-group-item moto-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span><%= moto.marca %> <%= moto.modelo %> - Número de Competencia: <%= moto.numero_competencia %></span>
+                    <div class="btn-group" role="group">
+                        <!-- Botón de Editar -->
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                data-moto-id="<%= moto.id %>" data-moto-marca="<%= moto.marca %>"
+                                data-moto-modelo="<%= moto.modelo %>" data-moto-numero_competencia="<%= moto.numero_competencia %>">Editar</button>
+                        <!-- Botón de Detalles -->
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#detailsModal"
+                                data-moto-marca="<%= moto.marca %>" data-moto-modelo="<%= moto.modelo %>"
+                                data-moto-numero_competencia="<%= moto.numero_competencia %>" data-moto-created_at="<%= moto.created_at %>"
+                                data-moto-updated_at="<%= moto.updated_at %>">Detalles</button>
+                        <!-- Botón de Eliminar -->
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-moto-id="<%= moto.id %>">Eliminar</button>
+                    </div>
+                </div>
+            </li>
+        <% }) %>
+    </ul>
+</div>
+
+<!-- Modal para crear moto -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Crear Moto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/motospanel" method="POST">
+                    <div class="mb-3">
+                        <label for="marca" class="form-label">Marca:</label>
+                        <input type="text" class="form-control" id="marca" name="marca" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modelo" class="form-label">Modelo:</label>
+                        <input type="text" class="form-control" id="modelo" name="modelo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="numero_competencia" class="form-label">Número de Competencia:</label>
+                        <input type="number" class="form-control" id="numero_competencia" name="numero_competencia" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar moto -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Moto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" action="" method="POST">
+                    <div class="mb-3">
+                        <label for="editMarca" class="form-label">Marca:</label>
+                        <input type="text" class="form-control" id="editMarca" name="marca" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editModelo" class="form-label">Modelo:</label>
+                        <input type="text" class="form-control" id="editModelo" name="modelo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editNumeroCompetencia" class="form-label">Número de Competencia:</label>
+                        <input type="number" class="form-control" id="editNumeroCompetencia" name="numero_competencia" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalles de la moto -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Detalles de la Moto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group mt-4">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Marca:</strong> <span id="detailMarca"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Modelo:</strong> <span id="detailModelo"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Número de Competencia:</strong> <span id="detailNumeroCompetencia"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Fecha de Creación:</strong> <span id="detailCreatedAt"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Última Actualización:</strong> <span id="detailUpdatedAt"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para eliminar moto -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar Moto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar esta moto?</p>
+                <form id="deleteForm" action="" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Funcionalidad del buscador
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.toLowerCase();
+            const motos = document.querySelectorAll('.moto-item');
+            motos.forEach(moto => {
+                const text = moto.innerText.toLowerCase();
+                moto.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+
+        // Funcionalidad de edición
+        const editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const motoId = button.getAttribute('data-moto-id');
+            const motoMarca = button.getAttribute('data-moto-marca');
+            const motoModelo = button.getAttribute('data-moto-modelo');
+            const motoNumeroCompetencia = button.getAttribute('data-moto-numero_competencia');
+
+            const editForm = document.getElementById('editForm');
+            editForm.action = `/motospanel/${motoId}`;
+            document.getElementById('editMarca').value = motoMarca;
+            document.getElementById('editModelo').value = motoModelo;
+            document.getElementById('editNumeroCompetencia').value = motoNumeroCompetencia;
+        });
+
+        // Funcionalidad de detalles
+        const detailsModal = document.getElementById('detailsModal');
+        detailsModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const motoMarca = button.getAttribute('data-moto-marca');
+            const motoModelo = button.getAttribute('data-moto-modelo');
+            const motoNumeroCompetencia = button.getAttribute('data-moto-numero_competencia');
+            const motoCreatedAt = button.getAttribute('data-moto-created_at');
+            const motoUpdatedAt = button.getAttribute('data-moto-updated_at');
+
+            document.getElementById('detailMarca').innerText = motoMarca;
+            document.getElementById('detailModelo').innerText = motoModelo;
+            document.getElementById('detailNumeroCompetencia').innerText = motoNumeroCompetencia;
+            document.getElementById('detailCreatedAt').innerText = motoCreatedAt;
+            document.getElementById('detailUpdatedAt').innerText = motoUpdatedAt;
+        });
+
+        // Funcionalidad de eliminación
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const motoId = button.getAttribute('data-moto-id');
+
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = `/motospanel/${motoId}?_method=DELETE`;
+        });
+    });
+</script>

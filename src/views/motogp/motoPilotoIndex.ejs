@@ -1,0 +1,206 @@
+<div class="container">
+    <h1 class="mt-4">Asignar Pilotos a Moto</h1>
+
+    <!-- Formulario para asignar piloto a moto -->
+    <div class="mb-3">
+        <form id="assignForm" action="/motoPiloto" method="POST">
+            <div class="mb-3">
+                <label for="moto_id" class="form-label">Moto:</label>
+                <select class="form-control" id="moto_id" name="moto_id" required>
+                    <% motos.forEach((moto) => { %>
+                        <option value="<%= moto.id %>"><%= moto.marca %> <%= moto.modelo %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="piloto_id" class="form-label">Piloto:</label>
+                <select class="form-control" id="piloto_id" name="piloto_id" required>
+                    <% pilotos.forEach((piloto) => { %>
+                        <option value="<%= piloto.id %>"><%= piloto.nombre %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="fecha_inicio" class="form-label">Fecha de Inicio:</label>
+                <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Asignar</button>
+        </form>
+    </div>
+
+    <!-- Lista de asignaciones -->
+    <ul class="list-group" id="motoPilotoList">
+        <% motoPilotos.forEach((motoPiloto) => { %>
+            <li class="list-group-item motoPiloto-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Moto: <%= motoPiloto.moto.marca %> <%= motoPiloto.moto.modelo %> - Piloto: <%= motoPiloto.piloto.nombre %> - Fecha de Inicio: <%= motoPiloto.fecha_inicio %></span>
+                    <div class="btn-group" role="group">
+                        <!-- Botón de Editar -->
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                data-motopiloto-id="<%= motoPiloto.id %>" data-motopiloto-moto_id="<%= motoPiloto.moto.id %>"
+                                data-motopiloto-piloto_id="<%= motoPiloto.piloto.id %>" data-motopiloto-fecha_inicio="<%= motoPiloto.fecha_inicio %>">Editar</button>
+                        <!-- Botón de Eliminar -->
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-motopiloto-id="<%= motoPiloto.id %>">Eliminar</button>
+                    </div>
+                </div>
+            </li>
+        <% }) %>
+    </ul>
+</div>
+
+<!-- Modal para editar asignación -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Asignación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" action="" method="POST">
+                    <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" id="editMotoPilotoId" name="motoPilotoId"> <!-- Campo oculto para el ID -->
+                    <div class="mb-3">
+                        <label for="editMotoId" class="form-label">Moto:</label>
+                        <select class="form-control" id="editMotoId" name="moto_id" required>
+                            <% motos.forEach((moto) => { %>
+                                <option value="<%= moto.id %>"><%= moto.marca %> <%= moto.modelo %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPilotoId" class="form-label">Piloto:</label>
+                        <select class="form-control" id="editPilotoId" name="piloto_id" required>
+                            <% pilotos.forEach((piloto) => { %>
+                                <option value="<%= piloto.id %>"><%= piloto.nombre %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editFechaInicio" class="form-label">Fecha de Inicio:</label>
+                        <input type="date" class="form-control" id="editFechaInicio" name="fecha_inicio" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para eliminar asignación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar Asignación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar esta asignación?</p>
+                <form id="deleteForm" action="" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" id="deleteMotoPilotoId" name="motoPilotoId"> <!-- Campo oculto para el ID -->
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Funcionalidad del buscador
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.toLowerCase();
+            const motoPilotos = document.querySelectorAll('.motoPiloto-item');
+            motoPilotos.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+
+        // Funcionalidad de edición
+        const editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const motoPilotoId = button.getAttribute('data-motopiloto-id');
+            const motoId = button.getAttribute('data-motopiloto-moto_id');
+            const pilotoId = button.getAttribute('data-motopiloto-piloto_id');
+            const fechaInicio = button.getAttribute('data-motopiloto-fecha_inicio');
+
+            const editForm = document.getElementById('editForm');
+            editForm.action = `/motoPiloto/${motoPilotoId}`;
+            document.getElementById('editMotoPilotoId').value = motoPilotoId; // Asignamos el valor al campo oculto
+            document.getElementById('editMotoId').value = motoId;
+            document.getElementById('editPilotoId').value = pilotoId;
+            document.getElementById('editFechaInicio').value = fechaInicio;
+
+            editForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                // Recolectar datos del formulario
+                const formData = new FormData(editForm);
+                const motoId = formData.get('moto_id');
+                const pilotoId = formData.get('piloto_id');
+                const fechaInicio = formData.get('fecha_inicio');
+
+                // Enviar datos al servidor usando PUT
+                fetch(`/motoPiloto/${motoPilotoId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        moto_id: motoId,
+                        piloto_id: pilotoId,
+                        fecha_inicio: fechaInicio
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/motoPiloto'; // Redirigir después de éxito
+                    } else {
+                        throw new Error('Error al actualizar la asignación');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+
+        // Funcionalidad de eliminación
+const deleteModal = document.getElementById('deleteModal');
+deleteModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const motoPilotoId = button.getAttribute('data-motopiloto-id');
+
+    const deleteForm = document.getElementById('deleteForm');
+    deleteForm.action = `/motoPiloto/${motoPilotoId}`;
+    document.getElementById('deleteMotoPilotoId').value = motoPilotoId; // Asignamos el valor al campo oculto
+
+    deleteForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Enviar datos al servidor usando DELETE
+        fetch(`/motoPiloto/${motoPilotoId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/motoPiloto'; // Redirigir después de éxito
+            } else {
+                throw new Error('Error al eliminar la asignación');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+
+    });
+</script>
